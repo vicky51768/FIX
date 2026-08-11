@@ -1,269 +1,441 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>報修紀錄查詢</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --paper:#EEF1F0;
-    --ink:#1A1D1E;
-    --ink-soft:#5B6360;
-    --line:#C9D0CC;
-    --amber:#B8792F;
-    --amber-bg:#F6E8D3;
-    --blue:#33627F;
-    --blue-bg:#DCE7EC;
-    --green:#4A7A5A;
-    --green-bg:#DEE9DF;
-    --card:#FFFFFF;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    background:var(--paper);
-    color:var(--ink);
-    font-family:'IBM Plex Sans TC', sans-serif;
-    -webkit-font-smoothing:antialiased;
-  }
-  .wrap{max-width:880px;margin:0 auto;padding:32px 20px 80px;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>報修紀錄查詢</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+TC:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --paper: #EEF1F0;
+      --ink: #1A1D1E;
+      --ink-soft: #5B6360;
+      --line: #C9D0CC;
+      --amber: #B8792F;
+      --amber-bg: #F6E8D3;
+      --blue: #33627F;
+      --blue-bg: #DCE7EC;
+      --green: #4A7A5A;
+      --green-bg: #DEE9DF;
+      --card: #FFFFFF;
+    }
 
-  header{margin-bottom:28px;}
-  .eyebrow{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:12px;
-    letter-spacing:.12em;
-    color:var(--ink-soft);
-    text-transform:uppercase;
-    margin-bottom:6px;
-  }
-  h1{
-    font-size:28px;
-    font-weight:700;
-    margin:0 0 4px;
-    letter-spacing:-0.01em;
-  }
-  .sub{color:var(--ink-soft);font-size:14px;margin:0;}
+    * {
+      box-sizing: border-box;
+    }
 
-  /* 受理單風格搜尋列 */
-  .intake{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:4px;
-    padding:18px;
-    margin-bottom:24px;
-    position:relative;
-  }
-  .intake::before{
-    content:'';
-    position:absolute;
-    left:0;top:14px;bottom:14px;width:3px;
-    background:repeating-linear-gradient(180deg,var(--ink) 0 6px, transparent 6px 12px);
-    opacity:.25;
-  }
-  .intake-row{display:flex;gap:10px;flex-wrap:wrap;}
-  .field{flex:1;min-width:160px;display:flex;flex-direction:column;gap:6px;}
-  label{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px;
-    letter-spacing:.08em;
-    text-transform:uppercase;
-    color:var(--ink-soft);
-  }
-  input[type=text], select{
-    font-family:'IBM Plex Sans TC',sans-serif;
-    font-size:14px;
-    padding:9px 10px;
-    border:1px solid var(--line);
-    border-radius:3px;
-    background:var(--paper);
-    color:var(--ink);
-  }
-  input[type=text]:focus, select:focus{
-    outline:2px solid var(--blue);
-    outline-offset:1px;
-    background:#fff;
-  }
-  .actions{display:flex;align-items:flex-end;}
-  button{
-    font-family:'IBM Plex Sans TC',sans-serif;
-    font-weight:600;
-    font-size:14px;
-    padding:10px 18px;
-    border:none;
-    border-radius:3px;
-    background:var(--ink);
-    color:var(--paper);
-    cursor:pointer;
-  }
-  button:hover{background:#000;}
-  button:focus-visible{outline:2px solid var(--blue);outline-offset:2px;}
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'IBM Plex Sans TC', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
 
-  .meta-bar{
-    display:flex;justify-content:space-between;align-items:center;
-    font-family:'IBM Plex Mono',monospace;
-    font-size:12px;color:var(--ink-soft);
-    margin:0 2px 12px;
-  }
+    .wrap {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
 
-  /* 工單清單 */
-  .ticket{
-    display:grid;
-    grid-template-columns:5px 1fr;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:4px;
-    margin-bottom:12px;
-    overflow:hidden;
-  }
-  .ticket-stripe{background:var(--ink-soft);}
-  .ticket.status-待接單 .ticket-stripe{background:var(--amber);}
-  .ticket.status-維修中 .ticket-stripe{background:var(--blue);}
-  .ticket.status-已結案 .ticket-stripe{background:var(--green);}
+    header {
+      margin-bottom: 28px;
+    }
 
-  .ticket-body{padding:14px 16px;}
-  .ticket-top{
-    display:flex;justify-content:space-between;align-items:baseline;
-    gap:12px;flex-wrap:wrap;margin-bottom:6px;
-  }
-  .ticket-id{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:12px;color:var(--ink-soft);
-    letter-spacing:.03em;
-  }
-  .company-tag{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px;font-weight:600;
-    letter-spacing:.05em;
-    padding:2px 8px;border-radius:3px;
-    background:#E4E7E2;color:var(--ink-soft);
-    margin-right:8px;
-  }
-  .status-tag{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px;font-weight:600;
-    letter-spacing:.05em;
-    padding:2px 9px;border-radius:99px;
-  }
-  .status-待接單 .status-tag{background:var(--amber-bg);color:var(--amber);}
-  .status-維修中 .status-tag{background:var(--blue-bg);color:var(--blue);}
-  .status-已結案 .status-tag{background:var(--green-bg);color:var(--green);}
+    .eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      letter-spacing: .12em;
+      color: var(--ink-soft);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
 
-  .ticket-title{font-size:16px;font-weight:600;margin:2px 0 6px;}
-  .ticket-desc{font-size:13.5px;color:#3d4341;line-height:1.5;margin:0 0 10px;}
-  .ticket-foot{
-    display:flex;gap:16px;flex-wrap:wrap;
-    font-size:12.5px;color:var(--ink-soft);
-    border-top:1px dashed var(--line);
-    padding-top:8px;
-  }
-  .ticket-foot span b{color:var(--ink);font-weight:500;}
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0 0 4px;
+      letter-spacing: -0.01em;
+    }
 
-  .empty{
-    text-align:center;padding:48px 20px;color:var(--ink-soft);
-    font-size:14px;
-  }
-  .empty b{display:block;color:var(--ink);font-size:16px;margin-bottom:6px;}
+    .sub {
+      color: var(--ink-soft);
+      font-size: 14px;
+      margin: 0;
+    }
 
-  footer{
-    margin-top:32px;padding-top:16px;border-top:1px solid var(--line);
-    font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-soft);
-    line-height:1.6;
-  }
-  footer code{background:#e2e6e3;padding:1px 5px;border-radius:3px;}
+    /* 受理單風格搜尋列 */
+    .intake {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      padding: 18px;
+      margin-bottom: 24px;
+      position: relative;
+    }
 
-  @media (max-width:480px){
-    h1{font-size:22px;}
-    .intake-row{flex-direction:column;}
-    .actions{width:100%;}
-    .actions button{width:100%;}
-  }
-</style>
+    .intake::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 14px;
+      bottom: 14px;
+      width: 3px;
+      background: repeating-linear-gradient(180deg, var(--ink) 0 6px, transparent 6px 12px);
+      opacity: .25;
+    }
+
+    .intake-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .field {
+      flex: 1;
+      min-width: 160px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field-company {
+      flex: 0 0 150px;
+    }
+
+    .field-unit {
+      flex: 0 0 180px;
+    }
+
+    .field-status {
+      flex: 0 0 140px;
+    }
+
+    .field-actions {
+      flex: 0 0 auto;
+    }
+
+    label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    input[type=text],
+    select {
+      font-family: 'IBM Plex Sans TC', sans-serif;
+      font-size: 14px;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    input[type=text]:focus,
+    select:focus {
+      outline: 2px solid var(--blue);
+      outline-offset: 1px;
+      background: #fff;
+    }
+
+    .actions {
+      display: flex;
+      align-items: flex-end;
+    }
+
+    button {
+      font-family: 'IBM Plex Sans TC', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 3px;
+      background: var(--ink);
+      color: var(--paper);
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #000;
+    }
+
+    button:focus-visible {
+      outline: 2px solid var(--blue);
+      outline-offset: 2px;
+    }
+
+    .meta-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--ink-soft);
+      margin: 0 2px 12px;
+    }
+
+    /* 工單清單 */
+    .ticket {
+      display: grid;
+      grid-template-columns: 5px 1fr;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .ticket-stripe {
+      background: var(--ink-soft);
+    }
+
+    .ticket.status-待接單 .ticket-stripe {
+      background: var(--amber);
+    }
+
+    .ticket.status-維修中 .ticket-stripe {
+      background: var(--blue);
+    }
+
+    .ticket.status-已結案 .ticket-stripe {
+      background: var(--green);
+    }
+
+    .ticket-body {
+      padding: 14px 16px;
+    }
+
+    .ticket-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+
+    .ticket-id {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--ink-soft);
+      letter-spacing: .03em;
+    }
+
+    .company-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .05em;
+      padding: 2px 8px;
+      border-radius: 3px;
+      background: #E4E7E2;
+      color: var(--ink-soft);
+      margin-right: 8px;
+    }
+
+    .status-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .05em;
+      padding: 2px 9px;
+      border-radius: 99px;
+    }
+
+    .status-待接單 .status-tag {
+      background: var(--amber-bg);
+      color: var(--amber);
+    }
+
+    .status-維修中 .status-tag {
+      background: var(--blue-bg);
+      color: var(--blue);
+    }
+
+    .status-已結案 .status-tag {
+      background: var(--green-bg);
+      color: var(--green);
+    }
+
+    .ticket-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 2px 0 6px;
+    }
+
+    .ticket-desc {
+      font-size: 13.5px;
+      color: #3d4341;
+      line-height: 1.5;
+      margin: 0 0 10px;
+    }
+
+    .ticket-foot {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      border-top: 1px dashed var(--line);
+      padding-top: 8px;
+    }
+
+    .ticket-foot span b {
+      color: var(--ink);
+      font-weight: 500;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--ink-soft);
+      font-size: 14px;
+    }
+
+    .empty b {
+      display: block;
+      color: var(--ink);
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    footer {
+      margin-top: 32px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11.5px;
+      color: var(--ink-soft);
+      line-height: 1.6;
+    }
+
+    footer code {
+      background: #e2e6e3;
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    @media (max-width:480px) {
+      h1 {
+        font-size: 22px;
+      }
+
+      .intake {
+        padding: 14px;
+      }
+
+      .intake-row {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .field-company,
+      .field-unit,
+      .field-status {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      .actions {
+        width: 100%;
+      }
+
+      .actions button {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<div class="wrap">
-  <header>
-    <div class="eyebrow">Facility Maintenance Log</div>
-    <h1>報修紀錄查詢</h1>
-    <p class="sub">先選公司、報修單位，或輸入關鍵字，查詢報修單目前進度</p>
-  </header>
+  <div class="wrap">
+    <header>
+      <div class="eyebrow">Facility Maintenance Log</div>
+      <h1>報修紀錄查詢</h1>
+      <p class="sub">先選公司、報修單位，或輸入關鍵字，查詢報修單目前進度</p>
+    </header>
 
-  <div class="intake">
-    <div class="intake-row">
-      <div class="field" style="flex:0 0 150px;">
-        <label for="company">公司</label>
-        <select id="company">
-          <option value="">全部</option>
-          <option value="首都">首都</option>
-          <option value="北客">北客</option>
-        </select>
+    <div class="intake">
+      <div class="intake-row">
+        <div class="field field-company">
+          <label for="company">公司</label>
+          <select id="company">
+            <option value="">全部</option>
+            <option value="首都">首都</option>
+            <option value="北客">北客</option>
+          </select>
+        </div>
+        <div class="field field-unit">
+          <label for="unit">報修單位</label>
+          <select id="unit">
+            <option value="">全部</option>
+          </select>
+        </div>
+        <div class="field field-status">
+          <label for="status">狀態</label>
+          <select id="status">
+            <option value="">全部</option>
+            <option value="待接單">待接單</option>
+            <option value="維修中">維修中</option>
+            <option value="已結案">已結案</option>
+          </select>
+        </div>
       </div>
-      <div class="field" style="flex:0 0 180px;">
-        <label for="unit">報修單位</label>
-        <select id="unit">
-          <option value="">全部</option>
-        </select>
-      </div>
-      <div class="field" style="flex:0 0 140px;">
-        <label for="status">狀態</label>
-        <select id="status">
-          <option value="">全部</option>
-          <option value="待接單">待接單</option>
-          <option value="維修中">維修中</option>
-          <option value="已結案">已結案</option>
-        </select>
+      <div class="intake-row" style="margin-top:10px;">
+        <div class="field">
+          <label for="q">關鍵字（項目 / 說明 / 案件編號）</label>
+          <!-- <input type="text" id="q" placeholder="例如：冷氣、CP-202608-0021"> -->
+        </div>
+        <div class="field field-actions actions">
+          <button id="searchBtn">查詢</button>
+        </div>
       </div>
     </div>
-    <div class="intake-row" style="margin-top:10px;">
-      <div class="field">
-        <label for="q">關鍵字（項目 / 說明 / 案件編號）</label>
-        <input type="text" id="q" placeholder="例如：冷氣、CP-202608-0021">
-      </div>
-      <div class="field actions" style="flex:0 0 auto;">
-        <button id="searchBtn">查詢</button>
-      </div>
+
+    <div class="meta-bar">
+      <span id="resultCount">共 0 筆</span>
+      <span id="dataSource">資料來源：示範資料</span>
     </div>
+
+    <div id="results"></div>
+
+    <footer>
+      資料來自「首都」與「北客」兩個獨立的 Google 試算表，各自透過 Apps Script 網頁應用程式提供查詢。若要調整來源，請修改原始碼中的 <code>SOURCES</code> 設定。
+    </footer>
   </div>
 
-  <div class="meta-bar">
-    <span id="resultCount">共 0 筆</span>
-    <span id="dataSource">資料來源：示範資料</span>
-  </div>
+  <script>
+    /* ============================================================
+       設定區：兩間公司各自的 Apps Script 網頁應用程式網址
+       ============================================================ */
+    const SOURCES = [
+      { company: "首都", url: "https://script.google.com/macros/s/AKfycbxysBJU3D9IsvImJNf8K8iZDJAta7k6ppoR7muCZnudgiBW71Z78PzFZ2qw4FBaYWA/exec?action=query" },
+      { company: "北客", url: "https://script.google.com/macros/s/AKfycbxZxHmrCj47i-Bt5ionL2iRc8JlGn9TrBe0TprfW-IiXYY4mpMKOoyh48n2Mg89TQ/exec?action=query" }
+    ];
 
-  <div id="results"></div>
+    const resultsEl = document.getElementById('results');
+    const countEl = document.getElementById('resultCount');
+    const sourceEl = document.getElementById('dataSource');
+    const qEl = document.getElementById('q');
+    const statusEl = document.getElementById('status');
+    const companyEl = document.getElementById('company');
+    const unitEl = document.getElementById('unit');
+    let allRecords = [];
 
-  <footer>
-    資料來自「首都」與「北客」兩個獨立的 Google 試算表，各自透過 Apps Script 網頁應用程式提供查詢。若要調整來源，請修改原始碼中的 <code>SOURCES</code> 設定。
-  </footer>
-</div>
-
-<script>
-/* ============================================================
-   設定區：兩間公司各自的 Apps Script 網頁應用程式網址
-   ============================================================ */
-const SOURCES = [
-  { company: "首都", url: "https://script.google.com/macros/s/AKfycbxysBJU3D9IsvImJNf8K8iZDJAta7k6ppoR7muCZnudgiBW71Z78PzFZ2qw4FBaYWA/exec?action=query" },
-  { company: "北客", url: "https://script.google.com/macros/s/AKfycbxZxHmrCj47i-Bt5ionL2iRc8JlGn9TrBe0TprfW-IiXYY4mpMKOoyh48n2Mg89TQ/exec?action=query" }
-];
-
-const resultsEl = document.getElementById('results');
-const countEl = document.getElementById('resultCount');
-const sourceEl = document.getElementById('dataSource');
-const qEl = document.getElementById('q');
-const statusEl = document.getElementById('status');
-const companyEl = document.getElementById('company');
-const unitEl = document.getElementById('unit');
-let allRecords = [];
-
-function render(records){
-  countEl.textContent = `共 ${records.length} 筆`;
-  if(records.length === 0){
-    resultsEl.innerHTML = `<div class="empty"><b>查無符合的報修紀錄</b>換個條件，或確認案件編號是否正確</div>`;
-    return;
-  }
-  resultsEl.innerHTML = records.map(r => `
+    function render(records) {
+      countEl.textContent = `共 ${records.length} 筆`;
+      if (records.length === 0) {
+        resultsEl.innerHTML = `<div class="empty"><b>查無符合的報修紀錄</b>換個條件，或確認案件編號是否正確</div>`;
+        return;
+      }
+      resultsEl.innerHTML = records.map(r => `
     <div class="ticket status-${r.status}">
       <div class="ticket-stripe"></div>
       <div class="ticket-body">
@@ -280,67 +452,68 @@ function render(records){
       </div>
     </div>
   `).join('');
-}
+    }
 
-// 依目前選定的公司，重建「報修單位」下拉選單的選項
-function refreshUnitOptions(){
-  const company = companyEl.value;
-  const pool = company ? allRecords.filter(r => r.company === company) : allRecords;
-  const units = [...new Set(pool.map(r => r.unit).filter(Boolean))].sort();
-  const current = unitEl.value;
-  unitEl.innerHTML = '<option value="">全部</option>' + units.map(u => `<option value="${u}">${u}</option>`).join('');
-  if(units.includes(current)) unitEl.value = current;
-}
+    // 依目前選定的公司，重建「報修單位」下拉選單的選項
+    function refreshUnitOptions() {
+      const company = companyEl.value;
+      const pool = company ? allRecords.filter(r => r.company === company) : allRecords;
+      const units = [...new Set(pool.map(r => r.unit).filter(Boolean))].sort();
+      const current = unitEl.value;
+      unitEl.innerHTML = '<option value="">全部</option>' + units.map(u => `<option value="${u}">${u}</option>`).join('');
+      if (units.includes(current)) unitEl.value = current;
+    }
 
-function applyFilter(){
-  const q = qEl.value.trim().toLowerCase();
-  const status = statusEl.value;
-  const company = companyEl.value;
-  const unit = unitEl.value;
-  const filtered = allRecords.filter(r=>{
-    const matchCompany = !company || r.company === company;
-    const matchUnit = !unit || r.unit === unit;
-    const matchStatus = !status || r.status === status;
-    const matchQ = !q || [r.caseId,r.item,r.description,r.repairPerson].join(' ').toLowerCase().includes(q);
-    return matchCompany && matchUnit && matchStatus && matchQ;
-  });
-  render(filtered);
-}
+    function applyFilter() {
+      const q = qEl.value.trim().toLowerCase();
+      const status = statusEl.value;
+      const company = companyEl.value;
+      const unit = unitEl.value;
+      const filtered = allRecords.filter(r => {
+        const matchCompany = !company || r.company === company;
+        const matchUnit = !unit || r.unit === unit;
+        const matchStatus = !status || r.status === status;
+        const matchQ = !q || [r.caseId, r.item, r.description, r.repairPerson].join(' ').toLowerCase().includes(q);
+        return matchCompany && matchUnit && matchStatus && matchQ;
+      });
+      render(filtered);
+    }
 
-async function fetchSource(src){
-  try{
-    const res = await fetch(src.url);
-    const data = await res.json();
-    if(!Array.isArray(data)) return [];
-    return data.map(r => ({ ...r, company: src.company }));
-  }catch(err){
-    console.error(`讀取「${src.company}」失敗：`, err);
-    return null; // null 代表這個來源讀取失敗，跟「讀到但沒有資料」的 [] 區分開來
-  }
-}
+    async function fetchSource(src) {
+      try {
+        const res = await fetch(src.url);
+        const data = await res.json();
+        if (!Array.isArray(data)) return [];
+        return data.map(r => ({ ...r, company: src.company }));
+      } catch (err) {
+        console.error(`讀取「${src.company}」失敗：`, err);
+        return null; // null 代表這個來源讀取失敗，跟「讀到但沒有資料」的 [] 區分開來
+      }
+    }
 
-async function loadData(){
-  sourceEl.textContent = "資料來源：讀取中...";
-  const results = await Promise.all(SOURCES.map(fetchSource));
+    async function loadData() {
+      sourceEl.textContent = "資料來源：讀取中...";
+      const results = await Promise.all(SOURCES.map(fetchSource));
 
-  const failed = SOURCES.filter((s,i) => results[i] === null).map(s => s.company);
-  allRecords = results.filter(r => r).flat();
+      const failed = SOURCES.filter((s, i) => results[i] === null).map(s => s.company);
+      allRecords = results.filter(r => r).flat();
 
-  sourceEl.textContent = failed.length
-    ? `資料來源：${failed.join('、')} 讀取失敗`
-    : `資料來源：${SOURCES.map(s=>s.company).join('、')}（共 ${SOURCES.length} 個試算表）`;
+      sourceEl.textContent = failed.length
+        ? `資料來源：${failed.join('、')} 讀取失敗`
+        : `資料來源：${SOURCES.map(s => s.company).join('、')}（共 ${SOURCES.length} 個試算表）`;
 
-  refreshUnitOptions();
-  render(allRecords);
-}
+      refreshUnitOptions();
+      render(allRecords);
+    }
 
-document.getElementById('searchBtn').addEventListener('click', applyFilter);
-qEl.addEventListener('keydown', e=>{ if(e.key==='Enter') applyFilter(); });
-statusEl.addEventListener('change', applyFilter);
-companyEl.addEventListener('change', ()=>{ refreshUnitOptions(); applyFilter(); });
-unitEl.addEventListener('change', applyFilter);
+    document.getElementById('searchBtn').addEventListener('click', applyFilter);
+    qEl.addEventListener('keydown', e => { if (e.key === 'Enter') applyFilter(); });
+    statusEl.addEventListener('change', applyFilter);
+    companyEl.addEventListener('change', () => { refreshUnitOptions(); applyFilter(); });
+    unitEl.addEventListener('change', applyFilter);
 
-loadData();
-</script>
+    loadData();
+  </script>
 </body>
+
 </html>
