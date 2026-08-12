@@ -191,9 +191,9 @@
 <body>
 <div class="wrap">
   <header>
-    <!-- <div class="eyebrow">Facility Maintenance Log</div> -->
-    <h1>資訊設備報修紀錄查詢</h1>
-    <p class="sub">選公司、報修單位，或輸入關鍵字，查詢報修單目前進度</p>
+    <div class="eyebrow">Facility Maintenance Log</div>
+    <h1>報修紀錄查詢</h1>
+    <p class="sub">先選公司、報修單位，或輸入關鍵字，查詢報修單目前進度</p>
   </header>
 
   <div class="intake">
@@ -224,8 +224,8 @@
     </div>
     <div class="intake-row" style="margin-top:10px;">
       <div class="field">
-        <label for="q">關鍵字（項目 / 說明 / 案件編號）</label>
-        <input type="text" id="q" placeholder="報修車號、故障情形等">
+        <label for="q">關鍵字（可用空白分隔多個詞，例如：冷氣 3樓）</label>
+        <input type="text" id="q" placeholder="例如：冷氣 3樓、CP-202608-0021">
       </div>
       <div class="field field-actions actions">
         <button id="searchBtn">查詢</button>
@@ -240,9 +240,9 @@
 
   <div id="results"></div>
 
-  <!-- <footer>
+  <footer>
     資料來自「首都」與「北客」兩個獨立的 Google 試算表，各自透過 Apps Script 網頁應用程式提供查詢。若要調整來源，請修改原始碼中的 <code>SOURCES</code> 設定。
-  </footer> -->
+  </footer>
 </div>
 
 <script>
@@ -300,6 +300,7 @@ function refreshUnitOptions(){
 
 function applyFilter(){
   const q = qEl.value.trim().toLowerCase();
+  const keywords = q ? q.split(/\s+/) : [];
   const status = statusEl.value;
   const company = companyEl.value;
   const unit = unitEl.value;
@@ -307,7 +308,8 @@ function applyFilter(){
     const matchCompany = !company || r.company === company;
     const matchUnit = !unit || r.unit === unit;
     const matchStatus = !status || r.status === status;
-    const matchQ = !q || [r.caseId,r.item,r.description,r.repairPerson].join(' ').toLowerCase().includes(q);
+    const haystack = [r.caseId,r.unit,r.item,r.description,r.repairPerson].join(' ').toLowerCase();
+    const matchQ = keywords.every(k => haystack.includes(k));
     return matchCompany && matchUnit && matchStatus && matchQ;
   });
   render(filtered);
