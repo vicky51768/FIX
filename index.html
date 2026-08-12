@@ -191,8 +191,8 @@
 <body>
 <div class="wrap">
   <header>
-    <!-- <div class="eyebrow">Facility Maintenance Log</div> -->
-    <h1>資訊設備報修紀錄查詢</h1>
+    <div class="eyebrow">Facility Maintenance Log</div>
+    <h1>報修紀錄查詢</h1>
     <p class="sub">先選公司、報修單位，或輸入關鍵字，查詢報修單目前進度</p>
   </header>
 
@@ -224,8 +224,8 @@
     </div>
     <div class="intake-row" style="margin-top:10px;">
       <div class="field">
-        <label for="q">關鍵字（例如：報修單位 故障情形）</label>
-        <input type="text" id="q" placeholder="請輸入關鍵字">
+        <label for="q">關鍵字（可用空白分隔多個詞，例如：冷氣 3樓）</label>
+        <input type="text" id="q" placeholder="例如：冷氣 3樓、CP-202608-0021">
       </div>
       <div class="field field-actions actions">
         <button id="searchBtn">查詢</button>
@@ -235,14 +235,14 @@
 
   <div class="meta-bar">
     <span id="resultCount">共 0 筆</span>
-    <!-- <span id="dataSource">資料來源：示範資料</span> -->
+    <span id="dataSource">資料來源：示範資料</span>
   </div>
 
   <div id="results"></div>
 
-  <!-- <footer>
+  <footer>
     資料來自「首都」與「北客」兩個獨立的 Google 試算表，各自透過 Apps Script 網頁應用程式提供查詢。若要調整來源，請修改原始碼中的 <code>SOURCES</code> 設定。
-  </footer> -->
+  </footer>
 </div>
 
 <script>
