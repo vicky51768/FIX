@@ -283,7 +283,7 @@ function render(records){
         <p class="ticket-desc">${r.description}</p>
         <div class="ticket-foot">
           <span>報修日期：<b>${r.repairDate}</b></span>
-          <span>車號：<b>${r.vehicleNo || '未填寫'}</b></span>
+          <span>車號：<b>${r.carNumber || '未填寫'}</b></span>
           <span>維修人員：<b>${r.repairPerson || '尚未指定'}</b></span>
         </div>
       </div>
@@ -311,7 +311,7 @@ function applyFilter(){
     const matchCompany = !company || r.company === company;
     const matchUnit = !unit || r.unit === unit;
     const matchStatus = !status || r.status === status;
-    const haystack = [r.caseId,r.unit,r.item,r.description,r.repairPerson,r.vehicleNo].join(' ').toLowerCase();
+    const haystack = [r.caseId,r.unit,r.item,r.description,r.repairPerson,r.carNumber].join(' ').toLowerCase();
     const matchQ = keywords.every(k => haystack.includes(k));
     return matchCompany && matchUnit && matchStatus && matchQ;
   });
