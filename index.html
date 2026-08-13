@@ -295,9 +295,8 @@ function render(records){
         <div class="ticket-title">${r.unit}｜${r.item}</div>
         <p class="ticket-desc">${r.description}</p>
         <div class="ticket-foot">
-         
-          <span>報修日期：<b>${formatRepairDate(r.repairDate)}</b></span>
-          
+        <span>報修日期：<b>${r.repairDate}</b></span>
+                  
           <span>維修人員：<b>${r.repairPerson || '尚未指定'}</b></span>
         </div>
       </div>
