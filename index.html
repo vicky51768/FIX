@@ -146,7 +146,7 @@
     margin-right:8px;
   }
   .company-tag.company-首都{background:#D9701E;color:#FFFFFF;}
-  .company-tag.company-北客{background:#4A7A5A;color:#FFFFFF;}
+  .company-tag.company-北客{background:#4A7A5A;color:#000000;}
   .status-tag{
     font-family:'IBM Plex Mono',monospace;
     font-size:11px;font-weight:600;
@@ -158,7 +158,7 @@
   .status-已結案 .status-tag{background:var(--green-bg);color:var(--green);}
 
   .ticket-title{font-size:16px;font-weight:600;margin:2px 0 6px;}
-  .ticket-desc{font-size:13.5px;color:#3d4341;line-height:1.5;margin:0 0 10px;}
+  .ticket-desc{font-size:13.5px;color:#1D5A8C;font-weight:700;line-height:1.5;margin:0 0 10px;}
   .ticket-foot{
     display:flex;gap:16px;flex-wrap:wrap;
     font-size:12.5px;color:var(--ink-soft);
@@ -226,8 +226,8 @@
     </div>
     <div class="intake-row" style="margin-top:10px;">
       <div class="field">
-        <label for="q">關鍵字（可用空白分隔多個詞，例如：站別 車號）</label>
-        <input type="text" id="q" placeholder="請輸入關鍵字">
+        <label for="q">關鍵字（可用空白分隔多個詞，例如：冷氣 3樓）</label>
+        <input type="text" id="q" placeholder="例如：冷氣 3樓、CP-202608-0021">
       </div>
       <div class="field field-actions actions">
         <button id="searchBtn">查詢</button>
@@ -282,7 +282,7 @@ function render(records){
         <div class="ticket-title">${r.unit}｜${r.item}</div>
         <p class="ticket-desc">${r.description}</p>
         <div class="ticket-foot">
-          <span>報修日期：<b>${r.repairDate}</b></span>
+          <span>報修日期：<b>${(r.timestamp || '無資料').replace(/:\d{2}$/, '')}</b></span>
           <span>車號：<b>${r.carNumber || '未填寫'}</b></span>
           <span>維修人員：<b>${r.repairPerson || '尚未指定'}</b></span>
         </div>
