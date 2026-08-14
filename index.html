@@ -119,7 +119,7 @@
     background:var(--card);
     border:1px solid var(--line);
     border-radius:4px;
-    margin-bottom:12px;
+    margin-bottom:8px;
     overflow:hidden;
   }
   .ticket-stripe{background:var(--ink-soft);}
@@ -127,10 +127,10 @@
   .ticket.status-維修中 .ticket-stripe{background:#C0392B;}
   .ticket.status-已結案 .ticket-stripe{background:var(--green);}
 
-  .ticket-body{padding:14px 16px;}
+  .ticket-body{padding:10px 14px;}
   .ticket-top{
     display:flex;justify-content:space-between;align-items:baseline;
-    gap:12px;flex-wrap:wrap;margin-bottom:6px;
+    gap:12px;flex-wrap:wrap;margin-bottom:4px;
   }
   .ticket-id{
     font-family:'IBM Plex Mono',monospace;
@@ -146,7 +146,7 @@
     margin-right:8px;
   }
   .company-tag.company-首都{background:#D9701E;color:#FFFFFF;}
-  .company-tag.company-北客{background:#4A7A5A;color:#FFFFFF;}
+  .company-tag.company-北客{background:#4A7A5A;color:#000000;}
   .status-tag{
     font-family:'IBM Plex Mono',monospace;
     font-size:11px;font-weight:600;
@@ -158,12 +158,22 @@
   .status-已結案 .status-tag{background:var(--green-bg);color:var(--green);}
 
   .ticket-title{font-size:16px;font-weight:600;margin:2px 0 6px;}
+  .ticket-info-row{
+    display:flex;gap:16px;flex-wrap:wrap;
+    align-items:baseline;
+    margin:0 0 8px;
+  }
+  .info-date{font-size:13px;color:var(--ink-soft);white-space:nowrap;}
+  .info-date b{color:var(--ink);font-weight:600;}
+  .info-desc{font-size:13.5px;color:var(--ink-soft);}
+  .info-desc b{color:#1D5A8C;font-weight:700;}
   .ticket-desc{font-size:13.5px;color:#1D5A8C;font-weight:700;line-height:1.5;margin:0 0 10px;}
   .ticket-foot{
     display:flex;gap:16px;flex-wrap:wrap;
     font-size:12.5px;color:var(--ink-soft);
     border-top:1px dashed var(--line);
-    padding-top:8px;
+    padding-top:6px;
+    margin-top:2px;
   }
   .ticket-foot span b{color:var(--ink);font-weight:500;}
 
@@ -195,7 +205,7 @@
   <header>
     <div class="eyebrow">Facility Maintenance Log</div>
     <h1>報修紀錄查詢</h1>
-    <p class="sub">選公司、報修單位或輸入關鍵字，查詢報修單目前進度</p>
+    <p class="sub">先選公司、報修單位，或輸入關鍵字，查詢報修單目前進度</p>
   </header>
 
   <div class="intake">
@@ -226,8 +236,8 @@
     </div>
     <div class="intake-row" style="margin-top:10px;">
       <div class="field">
-        <label for="q">關鍵字（可用空白分隔多個詞，例如：車號 故障說明）</label>
-        <input type="text" id="q" placeholder="請輸入關鍵字">
+        <label for="q">關鍵字（可用空白分隔多個詞，例如：冷氣 3樓）</label>
+        <input type="text" id="q" placeholder="例如：冷氣 3樓、CP-202608-0021">
       </div>
       <div class="field field-actions actions">
         <button id="searchBtn">查詢</button>
@@ -280,7 +290,10 @@ function render(records){
           <span class="status-tag">${r.status}</span>
         </div>
         <div class="ticket-title">${r.unit}｜${r.item}</div>
-        <p class="ticket-desc">${r.description}</p>
+        <div class="ticket-info-row">
+          <span class="info-date">故障日期：<b>${(r.repairDate || '無資料').split(' ')[0]}</b></span>
+          <span class="info-desc">故障說明：<b>${r.description}</b></span>
+        </div>
         <div class="ticket-foot">
           <span>報修日期：<b>${(r.timestamp || '無資料').replace(/:\d{2}$/, '')}</b></span>
           <span>車號：<b>${r.carNumber || '未填寫'}</b></span>
